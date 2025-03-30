@@ -57,15 +57,6 @@ export function SudokuBoard({ board, onCellChange, isInitial }: SudokuBoardProps
         break;
     }
 
-    // Skip initial cells when navigating
-    while (isInitial(newRow, newCol)) {
-      if (e.key === 'ArrowUp' && newRow > 0) newRow--;
-      else if (e.key === 'ArrowDown' && newRow < 8) newRow++;
-      else if (e.key === 'ArrowLeft' && newCol > 0) newCol--;
-      else if (e.key === 'ArrowRight' && newCol < 8) newCol++;
-      else break;
-    }
-
     if (newRow !== row || newCol !== col) {
       setSelectedCell({ row: newRow, col: newCol });
       inputRefs.current[newRow][newCol]?.focus(); // Focus the new cell
@@ -82,7 +73,7 @@ export function SudokuBoard({ board, onCellChange, isInitial }: SudokuBoardProps
             <div
               key={`${rowIndex}-${colIndex}`}
               className={`
-                w-10 h-10 flex items-center justify-center
+                leco w-10 h-10 flex items-center justify-center
                 ${(rowIndex + 1) % 3 === 0 && rowIndex < 8 ? 'border-b-2 border-gray-400' : ''}
                 ${(colIndex + 1) % 3 === 0 && colIndex < 8 ? 'border-r-2 border-gray-400' : ''}
                 ${isInitial(rowIndex, colIndex) ? 'font-bold bg-gray-50' : 'bg-white'}
@@ -90,23 +81,22 @@ export function SudokuBoard({ board, onCellChange, isInitial }: SudokuBoardProps
                 transition-colors duration-150
               `}
             >
-              {isInitial(rowIndex, colIndex) ? (
-                <span>{cell || ''}</span>
-              ) : (
-                <input
-                  ref={(el) => (inputRefs.current[rowIndex][colIndex] = el)} // Assign ref
-                  type="text"
-                  value={cell || ''}
-                  onChange={(e) => handleInputChange(rowIndex, colIndex, e.target.value)}
-                  onKeyDown={(e) => handleKeyDown(e, rowIndex, colIndex)}
-                  onClick={() => setSelectedCell({ row: rowIndex, col: colIndex })}
-                  className={`
-                    w-full h-full text-center focus:outline-none
-                    ${isSelected ? 'bg-indigo-50' : 'focus:bg-indigo-50'}
-                  `}
-                  maxLength={1}
-                />
-              )}
+              <input
+                ref={(el) => (inputRefs.current[rowIndex][colIndex] = el)} // Assign ref
+                type="text"
+                value={cell || ''}
+                onChange={(e) => !isInitial(rowIndex, colIndex) && handleInputChange(rowIndex, colIndex, e.target.value)}
+                onKeyDown={(e) => handleKeyDown(e, rowIndex, colIndex)}
+                onClick={() => setSelectedCell({ row: rowIndex, col: colIndex })}
+                readOnly={isInitial(rowIndex, colIndex)} // Set readonly for initial cells
+                className={`
+                  w-full h-full text-center focus:outline-none
+                  text-2xl
+                  ${isInitial(rowIndex, colIndex) ? 'font-bold bg-gray-50' : ''}
+                  ${isSelected ? 'bg-indigo-50' : 'focus:bg-indigo-50'}
+                `}
+                maxLength={1}
+              />
             </div>
           );
         })
