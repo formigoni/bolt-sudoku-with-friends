@@ -73,9 +73,11 @@ export function SudokuBoard({ board, onCellChange, isInitial }: SudokuBoardProps
             <div
               key={`${rowIndex}-${colIndex}`}
               className={`
-                leco w-10 h-10 flex items-center justify-center
-                ${(rowIndex + 1) % 3 === 0 && rowIndex < 8 ? 'border-b-2 border-gray-400' : ''}
-                ${(colIndex + 1) % 3 === 0 && colIndex < 8 ? 'border-r-2 border-gray-400' : ''}
+                size-12 flex items-center justify-center
+                ${(rowIndex + 1) % 3 === 0 ? 'border-b-2 border-gray-400' : ''}
+                ${(colIndex + 1) % 3 === 0 ? 'border-r-2 border-gray-400' : ''}
+                ${(rowIndex === 0) ? 'border-t-2 border-gray-400' : ''}
+                ${(colIndex === 0) ? 'border-l-2 border-gray-400' : ''}
                 ${isInitial(rowIndex, colIndex) ? 'font-bold bg-gray-50' : 'bg-white'}
                 ${isSelected ? 'bg-indigo-50' : ''}
                 transition-colors duration-150
@@ -90,7 +92,7 @@ export function SudokuBoard({ board, onCellChange, isInitial }: SudokuBoardProps
                 onClick={() => setSelectedCell({ row: rowIndex, col: colIndex })}
                 readOnly={isInitial(rowIndex, colIndex)} // Set readonly for initial cells
                 className={`
-                  w-full h-full text-center focus:outline-none
+                  size-full text-center focus:outline-none
                   text-2xl
                   ${isInitial(rowIndex, colIndex) ? 'font-bold bg-gray-50' : ''}
                   ${isSelected ? 'bg-indigo-50' : 'focus:bg-indigo-50'}
