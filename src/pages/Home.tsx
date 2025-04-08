@@ -200,30 +200,32 @@ export function Home() {
             </div>
           </div>
 
-          <button
-            onClick={handleCreateGame}
-            className="w-full bg-white hover:bg-indigo-50 text-indigo-600 font-semibold py-3 px-6 rounded-lg shadow-md transition duration-200 ease-in-out flex items-center justify-center space-x-2"
-          >
-            <Plus className="h-5 w-5" />
-            <span>Create New Game</span>
-          </button>
-
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Enter Game ID"
-              value={gameIdInput}
-              onChange={(e) => setGameIdInput(e.target.value)}
-              className="w-full bg-white bg-opacity-20 text-white placeholder-indigo-200 py-3 px-6 rounded-lg focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50"
-            />
             <button
-              onClick={() => handleJoinGame(gameIdInput)}
-              className="absolute right-2 top-1/2 transform -translate-y-1/2 text-indigo-200 hover:text-white"
+              onClick={handleCreateGame}
+              className="w-full bg-white hover:bg-indigo-50 text-indigo-600 font-semibold py-3 px-6 rounded-lg shadow-md transition duration-200 ease-in-out flex items-center justify-center space-x-2"
             >
-              <LogIn className="h-5 w-5" />
+              <Plus className="h-5 w-5" />
+              <span>Create New Game</span>
             </button>
+
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Enter Game ID"
+                value={gameIdInput}
+                onChange={(e) => setGameIdInput(e.target.value)}
+                className="w-full bg-white bg-opacity-20 text-white placeholder-indigo-200 py-3 px-6 rounded-lg focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50"
+              />
+              <button
+                onClick={() => handleJoinGame(gameIdInput)}
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-indigo-200 hover:text-white"
+              >
+                <LogIn className="h-5 w-5" />
+              </button>
+            </div>
           </div>
-        </div>
+
+
 
         <p className="text-center mt-8 text-indigo-100 text-sm">
           Create a new game or join an existing one to start playing
