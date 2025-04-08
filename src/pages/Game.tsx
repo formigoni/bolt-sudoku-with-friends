@@ -135,7 +135,7 @@ export function Game() {
 
   const getCellKey = (row: number, col: number) => `${row}-${col}`;
 
-  const toggleCandidate = async(row: number, col: number, candidate: number) => {
+  const toggleCandidate = async (row: number, col: number, candidate: number) => {
     if (board[row][col] !== 0 || isInitial(row, col)) return;
 
     const cellKey = getCellKey(row, col);
@@ -149,26 +149,26 @@ export function Game() {
     }
 
     newCandidates[cellKey] = currentCandidates;
+
+    // Transform candidates into JSONB-compatible format
+    const jsonbCandidates = Object.fromEntries(
+      Object.entries(newCandidates).map(([key, value]) => [key, Array.from(value)])
+    );
+
     setCandidates(newCandidates);
 
-/*    setCandidates(prev => ({
-      ...prev,
-      [cellKey]: currentCandidates
-    }));
-*/
     const { error } = await supabase
       .from('games')
       .update({
-        candidates: candidates
+        candidates: jsonbCandidates, // Persist as JSONB-compatible format
       })
       .eq('id', gameId);
 
     if (error) {
       console.error('Error updating candidates:', error);
-      setCandidates(candidates);
+      setCandidates(candidates); // Revert changes on error
       return;
     }
-
   };
 
   const handleClear = () => {
