@@ -7,13 +7,8 @@ interface SudokuBoardProps {
   playerColor?: string;
 }
 
-interface CellCandidates {
-  [key: string]: Set<number>; // Using row-col as key
-}
-
-export function SudokuBoard({ board, onCellChange, isInitial, playerColor = '#4F46E5' }: SudokuBoardProps) {
+export function SudokuBoard({ board, onCellChange, isInitial, getCandidates, toggleCandidate, playerColor = '#4F46E5' }: SudokuBoardProps) {
   const [selectedCell, setSelectedCell] = useState<{ row: number; col: number } | null>(null);
-  const [candidates, setCandidates] = useState<CellCandidates>({});
   const [hoveredCandidate, setHoveredCandidate] = useState<number | null>(null);
   const boardRef = useRef<HTMLDivElement>(null);
   const cellRefs = useRef<(HTMLDivElement | null)[][]>(
@@ -74,30 +69,6 @@ export function SudokuBoard({ board, onCellChange, isInitial, playerColor = '#4F
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [selectedCell, onCellChange, isInitial]);
-
-  const getCellKey = (row: number, col: number) => `${row}-${col}`;
-
-  const getCandidates = (row: number, col: number): Set<number> => {
-    return candidates[getCellKey(row, col)] || new Set();
-  };
-
-  const toggleCandidate = (row: number, col: number, candidate: number) => {
-    if (board[row][col] !== 0 || isInitial(row, col)) return;
-
-    const cellKey = getCellKey(row, col);
-    const currentCandidates = new Set(candidates[cellKey] || new Set());
-
-    if (currentCandidates.has(candidate)) {
-      currentCandidates.delete(candidate);
-    } else {
-      currentCandidates.add(candidate);
-    }
-
-    setCandidates(prev => ({
-      ...prev,
-      [cellKey]: currentCandidates
-    }));
-  };
 
   const handleCellClick = (row: number, col: number) => {
     setSelectedCell({ row, col });

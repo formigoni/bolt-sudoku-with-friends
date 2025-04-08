@@ -12,6 +12,10 @@ interface Player {
   selectedCell?: { row: number; col: number } | null;
 }
 
+interface CellCandidates {
+  [key: string]: Set<number>; // Using row-col as key
+}
+
 export function Game() {
   const { gameId } = useParams<{ gameId: string }>();
   const [searchParams] = useSearchParams();
@@ -21,6 +25,7 @@ export function Game() {
   const [solution, setSolution] = useState<number[][]>([]);
   const [initialBoard, setInitialBoard] = useState<boolean[][]>([]);
   const [players, setPlayers] = useState<Player[]>([]);
+  const [candidates, setCandidates] = useState<CellCandidates>({});
   const [selectedCell, setSelectedCell] = useState<{ row: number; col: number } | null>(null);
 
   const currentPlayer = players.find(player => player.id === playerId);
@@ -122,6 +127,48 @@ export function Game() {
         handleCellChange(row, col, number);
       }
     }
+  };
+
+  const getCandidates = (row: number, col: number): Set<number> => {
+    return candidates[getCellKey(row, col)] || new Set();
+  };
+
+  const getCellKey = (row: number, col: number) => `${row}-${col}`;
+
+  const toggleCandidate = async(row: number, col: number, candidate: number) => {
+    if (board[row][col] !== 0 || isInitial(row, col)) return;
+
+    const cellKey = getCellKey(row, col);
+    const currentCandidates = new Set(candidates[cellKey] || new Set());
+    const newCandidates = { ...candidates };
+
+    if (currentCandidates.has(candidate)) {
+      currentCandidates.delete(candidate);
+    } else {
+      currentCandidates.add(candidate);
+    }
+
+    newCandidates[cellKey] = currentCandidates;
+    setCandidates(newCandidates);
+
+/*    setCandidates(prev => ({
+      ...prev,
+      [cellKey]: currentCandidates
+    }));
+*/
+    const { error } = await supabase
+      .from('games')
+      .update({
+        candidates: candidates
+      })
+      .eq('id', gameId);
+
+    if (error) {
+      console.error('Error updating candidates:', error);
+      setCandidates(candidates);
+      return;
+    }
+
   };
 
   const handleClear = () => {
@@ -229,6 +276,8 @@ export function Game() {
                   board={board}
                   onCellChange={handleCellChange}
                   isInitial={isInitial}
+                  getCandidates={getCandidates}
+                  toggleCandidate={toggleCandidate}
                   playerColor={currentPlayer?.color}
                 />
               </div>
